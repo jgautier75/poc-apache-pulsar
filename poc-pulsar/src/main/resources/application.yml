@@ -1,0 +1,53 @@
+spring:
+  application:
+    name: poc-pulsar
+  main:
+    banner-mode: console
+  devtools:
+    restart:
+      enabled: false
+    livereload:
+      enabled: false
+  management:
+    endpoints:
+      web:
+        exposure:
+          include: 'health,metrics,prometheus'
+    endpoint:
+      health:
+        access: READ_ONLY
+        probes:
+          enabled: true
+        show-details: always
+      metrics:
+        access: READ_ONLY
+      prometheus:
+        access: READ_ONLY
+    health:
+      readinessstate:
+        enabled: true
+      livenessstate:
+        enabled: true
+      defaults:
+        enabled: true
+server:
+  port: 8081
+app:
+  config:
+    pulsar:
+      url: "http://192.168.1.15:6650"
+      adminUrl: "http://192.168.1.15:8080"
+      cluter: "cluster-a"
+      tenants:
+        - name: "mytenant"
+          cluster: "cluster-a"
+      namespaces:
+       - name: "mytenant/myns"
+         nbOfBundles: 1
+      topics:
+        - name: "persistent://mytenant/myns/topic1"
+          nbOfPartitions: 1
+        - name: "persistent://mytenant/myns/topic2"
+          nbOfPartitions: 2
+# {persistent|non-persistent}://tenant/namespace/topic
+
