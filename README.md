@@ -79,3 +79,31 @@ Copy serviceUrl value in "Service URL" pop-up, and brokerServiceUrl in "Bookie U
 Finally, in tour environment, you'll gain access to cluster management:
 
 ![](images/pulsar_management.png)
+
+## Spring Boot
+
+By convention topics must follow this pattern: "{persistent|non-persistent}://tenant/namespace/topic"
+
+Spring boot application.yml config file:
+
+```yml
+app:
+  config:
+    pulsar:
+      url: "http://192.168.1.15:6650"
+      adminUrl: "http://192.168.1.15:8080"
+      cluter: "cluster-a"
+      tenants:
+        - name: "mytenant"
+          cluster: "cluster-a"
+      namespaces:
+        - name: "mytenant/myns"
+          nbOfBundles: 1
+      topics:
+        - name: "persistent://mytenant/myns/topic1"
+          nbOfPartitions: 1
+        - name: "persistent://mytenant/myns/topic2"
+          nbOfPartitions: 2
+```
+
+In this application, tenant, namespace and topics are created at application startup in AppStartedListener class
