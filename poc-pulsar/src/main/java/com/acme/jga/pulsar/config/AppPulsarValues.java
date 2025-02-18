@@ -15,7 +15,6 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.NONE)
 @Data
 public class AppPulsarValues {
-    private String url;
     private String adminUrl;
     private String cluster;
     private List<AppTenant> tenants;

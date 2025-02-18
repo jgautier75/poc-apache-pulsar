@@ -90,7 +90,6 @@ Spring boot application.yml config file:
 app:
   config:
     pulsar:
-      url: "http://192.168.1.15:6650"
       adminUrl: "http://192.168.1.15:8080"
       cluter: "cluster-a"
       tenants:

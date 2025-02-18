@@ -10,6 +10,7 @@ import org.apache.pulsar.client.api.PulsarClientException;
 import org.apache.pulsar.common.policies.data.TenantInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpStatus;
 import org.springframework.pulsar.core.PulsarAdministration;
@@ -25,6 +26,9 @@ public class AppStartedListener {
 
     @Autowired
     private AppPulsarValues appPulsarValues;
+
+    @Autowired
+    private ApplicationContext webAppContext;
 
     @Autowired
     private PulsarAdministration pulsarAdministration;
@@ -72,7 +76,9 @@ public class AppStartedListener {
             try {
                 pulsarAdmin.namespaces().createNamespace(appns.getName(), appns.getNbOfBundles());
             } catch (PulsarAdminException e) {
-                log.error("Namespace creation ", e);
+                if (e.getStatusCode() != HttpStatus.CONFLICT.value()) {
+                    log.error("Namespace creation ", e);
+                }
             }
         });
     }
@@ -94,7 +100,9 @@ public class AppStartedListener {
             try {
                 pulsarAdmin.topics().createPartitionedTopic(appTopic.getName(), appTopic.getNbOfPartitions());
             } catch (PulsarAdminException e) {
-                log.error("Topics creation ", e);
+                if (e.getStatusCode() != HttpStatus.CONFLICT.value()) {
+                    log.error("Topics creation ", e);
+                }
             }
         });
     }
@@ -105,7 +113,9 @@ public class AppStartedListener {
             try {
                 isPresent.set(topics.getList(appNamespace.getName()).contains(topicName));
             } catch (PulsarAdminException e) {
-                log.error("Dose topic exists on server ", e);
+                if (e.getStatusCode() != HttpStatus.CONFLICT.value()) {
+                    log.error("Dose topic exists on server ", e);
+                }
             }
         });
         return isPresent.get();
