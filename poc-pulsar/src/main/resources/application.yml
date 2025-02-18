@@ -49,6 +49,8 @@ app:
       topics:
         - name: "persistent://mytenant/myns/topic1"
           nbOfPartitions: 1
+        - name: "persistent://mytenant/myns/topic1bis"
+          nbOfPartitions: 1
         - name: "persistent://mytenant/myns/topic2"
           nbOfPartitions: 2
 # {persistent|non-persistent}://tenant/namespace/topic

@@ -6,4 +6,11 @@ public interface IInjectorFacade {
 
     void stopTopic1Injector();
 
+    void startTopic1BisInjector();
+
+    void stopTopic1BisInjector();
+
+    void startTopic2Injector();
+
+    void stopTopic2Injector();
 }

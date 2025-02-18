@@ -21,4 +21,24 @@ public class PulsarController {
         injectorFacade.stopTopic1Injector();
     }
 
+    @PostMapping(value = "/api/v1/topic1Bis")
+    public void startTopic1BisInjection() {
+        injectorFacade.startTopic1BisInjector();
+    }
+
+    @DeleteMapping(value = "/api/v1/topic1Bis")
+    public void stopTopic1BisInjection() {
+        injectorFacade.stopTopic1BisInjector();
+    }
+
+    @PostMapping(value = "/api/v1/topic2")
+    public void startTopic2Injection() {
+        injectorFacade.startTopic2Injector();
+    }
+
+    @DeleteMapping(value = "/api/v1/topic2")
+    public void stopTopic2Injection() {
+        injectorFacade.stopTopic2Injector();
+    }
+
 }

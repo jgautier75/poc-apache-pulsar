@@ -4,6 +4,7 @@ import com.acme.jga.pulsar.consumers.api.IConsumerFacade;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pulsar.client.api.SubscriptionType;
+import org.springframework.messaging.Message;
 import org.springframework.pulsar.annotation.PulsarListener;
 import org.springframework.pulsar.core.PulsarTemplate;
 import org.springframework.stereotype.Service;
@@ -14,9 +15,24 @@ import org.springframework.stereotype.Service;
 public class ConsumerFacade implements IConsumerFacade {
     private final PulsarTemplate<String> pulsarTemplate;
 
-    @PulsarListener(topics = "topic1", subscriptionName = "consumer-topic1", subscriptionType = SubscriptionType.Exclusive)
-    public void consumeTopic1(String message) {
-        log.info("Consuming [{}]", message);
+    @PulsarListener(topics = "topic1", subscriptionName = "consumer-1-topic1", subscriptionType = SubscriptionType.Shared)
+    public void consumeTopic1Sub1(String message) {
+        log.info("consumer-1-topic1 - consuming [{}]", message);
+    }
+
+    @PulsarListener(topics = "topic1", subscriptionName = "consumer-1-topic1", subscriptionType = SubscriptionType.Shared)
+    public void consumeTopic1Sub2(String message) {
+        log.info("consumer-1-topic1-copy - consuming [{}]", message);
+    }
+
+    @PulsarListener(topics = "topic1Bis", subscriptionName = "consumer-1-key-1-topic1-bis", subscriptionType = SubscriptionType.Key_Shared)
+    public void consumeTopic1Sub1Key1(Message<String> record) {
+        log.info("consumer-1-key-1-topic1-bis - consuming [{}] - [{}]", record.getHeaders(), record.getPayload());
+    }
+
+    @PulsarListener(topics = "topic1Bis", subscriptionName = "consumer-1-key-1-topic1-bis", subscriptionType = SubscriptionType.Key_Shared)
+    public void consumeTopic1Sub1Key2(Message<String> record) {
+        log.info("consumer-1-key-2-topic1-bis - consuming [{}] - [{}]", record.getHeaders(), record.getPayload());
     }
 
 }
