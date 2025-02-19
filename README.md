@@ -137,3 +137,35 @@ Result: So with shared subscriptionType, messages are consumed by both subscribe
 ## SchemaType
 
 Schema type aims at specifying messages data type, various data types are supported like String, Json, Avro, Protobuf.
+
+## Topic Partition
+
+Use case with "topic1Bis"
+
+In order to consume topics by partition, a key must be set in message header:
+
+```java
+public void sendTopic1BisWithKey() {
+    pulsarTemplate.newMessage("topic1Bis_" + formatUsingDateTimeFormatter(LocalDateTime.now()))
+            .withMessageCustomizer(mc -> {
+                mc.key(generateKeyPrefix());
+            })
+            .withTopic("topic1Bis")
+            .withProducerCustomizer(pc -> pc.batcherBuilder(BatcherBuilder.KEY_BASED))
+            .send();
+}
+```
+
+On consumer side:
+
+```java
+@PulsarListener(topics = "topic1Bis", subscriptionName = "consumer-1-key-1-topic1-bis", subscriptionType = SubscriptionType.Key_Shared)
+public void consumeTopic1Sub1Key1(Message<String> record) {
+    log.info("consumer-1-key-1-topic1-bis - consuming [{}] - [{}]", record.getHeaders().get(KEY_HEADER), record.getPayload());
+}
+
+@PulsarListener(topics = "topic1Bis", subscriptionName = "consumer-1-key-1-topic1-bis", subscriptionType = SubscriptionType.Key_Shared)
+public void consumeTopic1Sub1Key2(Message<String> record) {
+    log.info("consumer-1-key-2-topic1-bis - consuming [{}] - [{}]", record.getHeaders().get(KEY_HEADER), record.getPayload());
+}
+```
