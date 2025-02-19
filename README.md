@@ -106,3 +106,34 @@ app:
 ```
 
 In this application, tenant, namespace and topics are created at application startup in AppStartedListener class
+
+## Consumers
+
+Listener: ConsumerFacade
+
+* One partition with the same subscriptionName and shared subscriptionType
+
+```java
+@PulsarListener(topics = "topic1", subscriptionName = "consumer-1-topic1", subscriptionType = SubscriptionType.Shared)
+public void consumeTopic1Sub1(String message) {
+    log.info("consumer-1-topic1 - consuming [{}]", message);
+}
+
+@PulsarListener(topics = "topic1", subscriptionName = "consumer-1-topic1", subscriptionType = SubscriptionType.Shared)
+public void consumeTopic1Sub2(String message) {
+    log.info("consumer-1-topic1-copy - consuming [{}]", message);
+}
+```
+
+Result: So with shared subscriptionType, messages are consumed by both subscribers
+
+## Subscription Type
+
+* **Exclusive**: There can be only one consumer on the same topic with the same subscription name
+* **Shared**: Multiple consumer will be able to use the same subscription name and the messages will be dispatched according to a round-robin rotation between the connected consumers. **In this mode, the consumption order is not guaranteed.**
+* **Failover**: Multiple consumer will be able to use the same subscription name but only 1 consumer will receive the messages. If that consumer disconnects, one of the other connected consumers will start receiving messages.
+* **Key_Shared**: Multiple consumer will be able to use the same subscription and all messages with the same key will be dispatched to only one consumer.
+
+## SchemaType
+
+Schema type aims at specifying messages data type, various data types are supported like String, Json, Avro, Protobuf.

@@ -2,6 +2,7 @@ package com.acme.jga.pulsar.producers.impl;
 
 import com.acme.jga.pulsar.producers.api.IProducerFacade;
 import lombok.RequiredArgsConstructor;
+import org.apache.pulsar.client.api.BatcherBuilder;
 import org.springframework.pulsar.core.PulsarTemplate;
 import org.springframework.stereotype.Service;
 
@@ -26,12 +27,18 @@ public class ProducerFacade implements IProducerFacade {
 
     @Override
     public void sendTopic1BisWithKey() {
-        pulsarTemplate.send("topic1Bis", "topic1Bis_" + generateKeyPrefix() + formatUsingDateTimeFormatter(LocalDateTime.now()));
+        pulsarTemplate.newMessage("topic1Bis_" + formatUsingDateTimeFormatter(LocalDateTime.now()))
+                .withMessageCustomizer(mc -> {
+                    mc.key(generateKeyPrefix());
+                })
+                .withTopic("topic1Bis")
+                .withProducerCustomizer(pc -> pc.batcherBuilder(BatcherBuilder.KEY_BASED))
+                .send();
     }
 
     private String generateKeyPrefix() {
         SecureRandom sr = new SecureRandom();
-        return "Key" + sr.nextInt(1, 3) + "_";
+        return "Key" + sr.nextInt(1, 3);
     }
 
     private String formatUsingDateTimeFormatter(LocalDateTime localDate) {

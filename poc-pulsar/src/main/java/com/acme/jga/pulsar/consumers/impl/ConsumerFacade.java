@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Slf4j
 public class ConsumerFacade implements IConsumerFacade {
+    private static final String KEY_HEADER = "pulsar_message_key";
     private final PulsarTemplate<String> pulsarTemplate;
 
     @PulsarListener(topics = "topic1", subscriptionName = "consumer-1-topic1", subscriptionType = SubscriptionType.Shared)
@@ -27,12 +28,12 @@ public class ConsumerFacade implements IConsumerFacade {
 
     @PulsarListener(topics = "topic1Bis", subscriptionName = "consumer-1-key-1-topic1-bis", subscriptionType = SubscriptionType.Key_Shared)
     public void consumeTopic1Sub1Key1(Message<String> record) {
-        log.info("consumer-1-key-1-topic1-bis - consuming [{}] - [{}]", record.getHeaders(), record.getPayload());
+        log.info("consumer-1-key-1-topic1-bis - consuming [{}] - [{}]", record.getHeaders().get(KEY_HEADER), record.getPayload());
     }
 
     @PulsarListener(topics = "topic1Bis", subscriptionName = "consumer-1-key-1-topic1-bis", subscriptionType = SubscriptionType.Key_Shared)
     public void consumeTopic1Sub1Key2(Message<String> record) {
-        log.info("consumer-1-key-2-topic1-bis - consuming [{}] - [{}]", record.getHeaders(), record.getPayload());
+        log.info("consumer-1-key-2-topic1-bis - consuming [{}] - [{}]", record.getHeaders().get(KEY_HEADER), record.getPayload());
     }
 
 }
