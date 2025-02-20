@@ -12,66 +12,47 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class InjectorFacade implements IInjectorFacade {
     private final IProducerFacade producerFacade;
     private final long WAIT_MS = 1000L;
+
     private final AtomicBoolean topic1Run = new AtomicBoolean(false);
     private final AtomicBoolean topic1BisRun = new AtomicBoolean(false);
     private final AtomicBoolean topic2Run = new AtomicBoolean(false);
 
     @Override
     public void startTopic1Injector() {
-        topic1Run.set(true);
-        Thread virtualThread = Thread.startVirtualThread(() -> {
-            while (topic1Run.get()) {
-                producerFacade.sendTopic1();
-                try {
-                    Thread.sleep(WAIT_MS);
-                } catch (InterruptedException e) {
-                    // Silent catch
-                }
-            }
-        });
-        try {
-            virtualThread.join();  // Wait for the virtual thread to finish execution
-        } catch (InterruptedException e) {
-            System.out.println("Main thread interrupted");
-        }
+        startInjector(topic1Run, producerFacade::sendTopic1);
     }
 
     @Override
     public void stopTopic1Injector() {
-        topic1Run.set(false);
+        stopInjector(topic1Run);
     }
 
     @Override
     public void startTopic1BisInjector() {
-        topic1BisRun.set(true);
-        Thread virtualThread = Thread.startVirtualThread(() -> {
-            while (topic1BisRun.get()) {
-                producerFacade.sendTopic1BisWithKey();
-                try {
-                    Thread.sleep(WAIT_MS);
-                } catch (InterruptedException e) {
-                    // Silent catch
-                }
-            }
-        });
-        try {
-            virtualThread.join();  // Wait for the virtual thread to finish execution
-        } catch (InterruptedException e) {
-            System.out.println("Main thread interrupted");
-        }
+        startInjector(topic1BisRun, producerFacade::sendTopic1BisWithKey);
     }
 
     @Override
     public void stopTopic1BisInjector() {
-        topic1BisRun.set(false);
+        stopInjector(topic1BisRun);
     }
 
     @Override
     public void startTopic2Injector() {
-        topic2Run.set(true);
+        startInjector(topic2Run, producerFacade::sendTopic2);
+    }
+
+    @Override
+    public void stopTopic2Injector() {
+        stopInjector(topic2Run);
+    }
+
+    // Method to start a generic injector
+    private void startInjector(AtomicBoolean runFlag, Runnable task) {
+        runFlag.set(true);
         Thread virtualThread = Thread.startVirtualThread(() -> {
-            while (topic2Run.get()) {
-                producerFacade.sendTopic2();
+            while (runFlag.get()) {
+                task.run();
                 try {
                     Thread.sleep(WAIT_MS);
                 } catch (InterruptedException e) {
@@ -86,8 +67,8 @@ public class InjectorFacade implements IInjectorFacade {
         }
     }
 
-    @Override
-    public void stopTopic2Injector() {
-        topic2Run.set(false);
+    // Method to stop a generic injector
+    private void stopInjector(AtomicBoolean runFlag) {
+        runFlag.set(false);
     }
 }

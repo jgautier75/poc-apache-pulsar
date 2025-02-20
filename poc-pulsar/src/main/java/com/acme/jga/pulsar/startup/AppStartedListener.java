@@ -114,7 +114,7 @@ public class AppStartedListener {
                 isPresent.set(topics.getList(appNamespace.getName()).contains(topicName));
             } catch (PulsarAdminException e) {
                 if (e.getStatusCode() != HttpStatus.CONFLICT.value()) {
-                    log.error("Dose topic exists on server ", e);
+                    log.error("Does topic exists on server ", e);
                 }
             }
         });

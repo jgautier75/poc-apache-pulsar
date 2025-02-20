@@ -28,9 +28,7 @@ public class ProducerFacade implements IProducerFacade {
     @Override
     public void sendTopic1BisWithKey() {
         pulsarTemplate.newMessage("topic1Bis_" + formatUsingDateTimeFormatter(LocalDateTime.now()))
-                .withMessageCustomizer(mc -> {
-                    mc.key(generateKeyPrefix());
-                })
+                .withMessageCustomizer(mc -> mc.key(generateKeyPrefix()))
                 .withTopic("topic1Bis")
                 .withProducerCustomizer(pc -> pc.batcherBuilder(BatcherBuilder.KEY_BASED))
                 .send();
