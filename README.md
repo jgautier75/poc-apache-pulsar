@@ -138,11 +138,9 @@ Result: So with shared subscriptionType, messages are consumed by both subscribe
 
 Schema type aims at specifying messages data type, various data types are supported like String, Json, Avro, Protobuf.
 
-## Topic Partition
+## Consuming messages base on message key
 
 Use case with "topic1Bis"
-
-In order to consume topics by partition, a key must be set in message header:
 
 ```java
 public void sendTopic1BisWithKey() {
@@ -168,4 +166,28 @@ public void consumeTopic1Sub1Key1(Message<String> record) {
 public void consumeTopic1Sub1Key2(Message<String> record) {
     log.info("consumer-1-key-2-topic1-bis - consuming [{}] - [{}]", record.getHeaders().get(KEY_HEADER), record.getPayload());
 }
+```
+
+## Consuming messages by partition
+
+Use case with topic2 (2 partitions)
+```java
+@PulsarListener(topics = "topic2", subscriptionName = "consumer-1-topic2")
+public void consumeTopic2Partition1(Message<String> record) {
+    log.info("consumer-1-topic2 - consuming with sequence [{}] - [{}]", record.getHeaders().get(SEQUENCE_ID), record.getPayload());
+}
+
+@PulsarListener(topics = "topic2", subscriptionName = "consumer-2-topic2")
+public void consumeTopic2Partition2(Message<String> record) {
+    log.info("consumer-2-topic2 - consuming with sequence [{}] - [{}]", record.getHeaders().get(SEQUENCE_ID), record.getPayload());
+}
+```
+
+As you can see in output, the same message is consumed by two different consumers:
+
+```
+2025-02-20 10:57:10,381 INFO  [org.springframework.Pulsar.PulsarListenerEndpointContainer#5-0-C-1] - consumer-2-topic2 - consuming [2] - [topic2_2025-02-20T10:57:10.284Z]
+2025-02-20 10:57:10,381 INFO  [org.springframework.Pulsar.PulsarListenerEndpointContainer#4-0-C-1] - consumer-1-topic2 - consuming [2] - [topic2_2025-02-20T10:57:10.284Z]
+2025-02-20 10:57:11,391 INFO  [org.springframework.Pulsar.PulsarListenerEndpointContainer#5-0-C-1] - consumer-2-topic2 - consuming [3] - [topic2_2025-02-20T10:57:11.304Z]
+2025-02-20 10:57:11,392 INFO  [org.springframework.Pulsar.PulsarListenerEndpointContainer#4-0-C-1] - consumer-1-topic2 - consuming [3] - [topic2_2025-02-20T10:57:11.304Z]
 ```
