@@ -53,5 +53,3 @@ app:
           nbOfPartitions: 1
         - name: "persistent://mytenant/myns/topic2"
           nbOfPartitions: 2
-# {persistent|non-persistent}://tenant/namespace/topic
-

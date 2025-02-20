@@ -24,7 +24,7 @@ Docker containers
 | pulsar-init     | 4.0.2   | -           | Initialize cluster                        |
 | bookie          | 4.0.2   | 3181 / 8000 |                                           |
 | broker          | 4.0.2   | 8080 / 6650 | Admin endpoints (8080), Listener (6650)   |
-| web-gui         | 0.24.0  | 9527        | Pulsar-Manager GUI                        | 
+| web-gui         | 0.24.0  | 7750 / 9527 | Pulsar-Manager GUI                        | 
 
 
 ## Admin GUI
@@ -100,6 +100,8 @@ app:
           nbOfBundles: 1
       topics:
         - name: "persistent://mytenant/myns/topic1"
+          nbOfPartitions: 1
+        - name: "persistent://mytenant/myns/topic1bis"
           nbOfPartitions: 1
         - name: "persistent://mytenant/myns/topic2"
           nbOfPartitions: 2
